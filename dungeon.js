@@ -13,3 +13,30 @@ function test() {
     }
 };
 
+function mapTest() {
+    var mapArray = [[1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,0],[1,1,1,1,0,1,1,1,0,1]];
+    
+    var currentElem = document.getElementById("mapDiv");
+    var mapTable = document.getElementById("mapTable");
+    var newRow = document.createElement("tr");
+    var newCol = document.createElement("td");
+    
+    for (let i = 0; i < mapArray.length; i++ ) {
+        //console.log(mapArray[i]);
+        
+        var newRow = mapTable.insertRow(i);
+        newRow.setAttribute("id", "mapRow");
+
+        for (let j = 0; j < mapArray[i].length; j++) {
+            //console.log(mapArray[i][j])
+            
+            var newCell = newRow.insertCell(j);
+            if (mapArray[i][j] == 1) {
+                newCell.setAttribute("id", "mapCellWall");
+            }
+            else {
+                newCell.setAttribute("id", "mapCellSpace");
+            }
+        }
+    }
+}
