@@ -1,19 +1,35 @@
-function rollDice(sides, min = 1) {
-    return Math.floor(Math.random() * (sides - min + 1)) + min; //we assume the minimum is always 1
+function rollDice(max, min) { //basic randomizer
+    return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
 
-function mapDisplay() {
+function mapBuild(height = 5, width = 10) {
     //2d array to hold map information
     //0 = mapCellSpace, ie walkable tile
     //1 = mapCellWall, ie impassable tile
     //will add further values for other options later
-    var mapArray = [[1,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,0,0],[1,1,1,1,0,1,1,1,0,1]];
-    
-    var currentElem = document.getElementById("mapDiv");
-    var mapTable = document.getElementById("mapTable");
-    var newRow = document.createElement("tr");
-    var newCol = document.createElement("td");
+    var mapArray = [];
+    var row = [];
 
+    for (let i = 0; i < height; i++) { //rows
+        for (let j = 0; j < width; j++) { //cols
+            row.push(rollDice(1,0));
+        }
+        mapArray.push(row);
+        row = [];
+    }
+    return mapArray;
+}
+
+function mapDisplay() {
+    //setup map dims from html form
+    let mapHeight = document.getElementById('height').value;
+    let mapWidth = document.getElementById('width').value;
+
+    var mapArray = mapBuild(mapHeight, mapWidth);
+    
+    const currentElem = document.getElementById("mapDiv");
+    const mapTable = document.getElementById("mapTable");
+    
     //clears old map, if it exists
     while(mapTable.firstChild) {
         mapTable.removeChild(mapTable.firstChild);
@@ -35,3 +51,4 @@ function mapDisplay() {
         }
     }
 }
+
