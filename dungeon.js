@@ -23,13 +23,13 @@ function RollDice(max, min) {
 }
 
 function RoomGenerator(height = 5, width = 10){
-    //let room = MapModifier(height+2, width+2, 1, 1);
-
     let innerRoom = MapModifier(height, width, 0, 0);
     let roomWrapTopBottom = MapModifier(1, width-2, 1, 1); //the -2 is a magic number. idk why it makes it work right. need to figure it out.
+    //adds the top/bottom walls
     innerRoom.unshift(roomWrapTopBottom[0]);
     innerRoom.push(roomWrapTopBottom[0]);
-    console.log(innerRoom);
+    
+    //adds the left and right walls. something here is wrong, 'fixed' by the magic number above
     for (let i = 0; i < innerRoom.length; i++) {
         innerRoom[i].unshift({
             cellValue: 1,
@@ -37,14 +37,12 @@ function RoomGenerator(height = 5, width = 10){
         innerRoom[i].push({
             cellValue: 1,
         });
-        console.log("inside for " + innerRoom[i]);
-        console.log(innerRoom[i].length);
     }
-    
-    console.log(innerRoom);
-    
+        
     return innerRoom;
 }
+
+
 
 function MapModifier(height = 5, width = 10, max = 1, min = 1) {
     //2d array to hold map information
