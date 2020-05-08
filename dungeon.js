@@ -23,14 +23,13 @@ function RollDice(max, min) {
 }
 
 function RoomGenerator(height = 5, width = 10){
-    let innerRoom = MapModifier(height, width, 0, 0);
-    let roomWrapTopBottom = MapModifier(1, width-2, 1, 1); //the -2 is a magic number. idk why it makes it work right. need to figure it out.
+    let innerRoom = GenerateSquareArray(height, width, 0, 0);
+    let roomWrapTopBottom = GenerateSquareArray(1, width, 1, 1);
     //adds the top/bottom walls
     innerRoom.unshift(roomWrapTopBottom[0]);
     innerRoom.push(roomWrapTopBottom[0]);
     
-    //adds the left and right walls. something here is wrong, 'fixed' by the magic number above
-    for (let i = 0; i < innerRoom.length; i++) {
+    for (let i = 1; i < innerRoom.length; i++) {
         innerRoom[i].unshift({
             cellValue: 1,
         });
@@ -38,23 +37,20 @@ function RoomGenerator(height = 5, width = 10){
             cellValue: 1,
         });
     }
-        
     return innerRoom;
 }
 
-
-
-function MapModifier(height = 5, width = 10, max = 1, min = 1) {
+function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
     //2d array to hold map information
     //0 = mapCellSpace, ie walkable tile
     //1 = mapCellWall, ie impassable tile
     //will add further values for other options later
     let mapArray = [];
     var row = [];
-
+    
     for (let i = 0; i < height; i++) { //rows
         for (let j = 0; j < width; j++) { //cols
-            if (max == 1 && min == 1) {
+            if (max == 1 && min == 1) { //replace with .fill()
                 row.push({
                     cellValue: 1,
                 });
@@ -76,18 +72,66 @@ function MapModifier(height = 5, width = 10, max = 1, min = 1) {
     return mapArray;
 }
 
+function FullMap(height = 5, width = 10) {
+    let min = 1;
+    let max = 1;
+    let fullMap = GenerateSquareArray(height, width, max, min);
+    
+    /*
+    iterate over fullMap
+    temporarily: create a set number of rooms of set sizes
+    let's say, 3 rooms, 2x2, 3x4, 5x5
+    pick a location for those rooms to exist (can be predetermined atm)
+    get that index. use that index as the start for the iteration.
+    overwrite the fullMap array with the room array based on that index.
+    */
+    var room = GenerateSquareArray(2, 2, 0, 0);
+
+    for (let i = 5; i < 7 ; i++) {
+        for (let j = 5; j < 7; j++) {
+            fullMap[i][j] = room[i-5][j-5];
+            console.log("i " + i + " j " + j);
+            console.log(fullMap[i][j]);
+            console.log(room[i-5][j-5]);
+        }
+    }
+
+    room = GenerateSquareArray(3, 4, 0, 0);
+
+    for (let i = 10; i < 13 ; i++) {
+        for (let j = 10; j < 14; j++) {
+            fullMap[i][j] = room[i-10][j-10];
+            console.log("i " + i + " j " + j);
+            console.log(fullMap[i][j]);
+            console.log(room[i-10][j-10]);
+        }
+    }
+
+    return fullMap;
+}
+
 //converts the map array into a table to display
 function MapDisplay() {
     //setup map dims from html form
     let mapHeight = document.getElementById('height').value;
     let mapWidth = document.getElementById('width').value;
-    let min = 0
-    let max = 1
+
     
-    var mapArray = RoomGenerator(mapHeight, mapWidth); //MapModifier(mapHeight, mapWidth, max, min);
+    var mapArray = FullMap(mapHeight, mapWidth); //GenerateSquareArray(mapHeight, mapWidth, max, min);
     const currentElem = document.getElementById("mapDiv");
     const mapTable = document.getElementById("mapTable");
     
+    //random array merging test area
+    let testArr1 = [[1,1,1,1,1],[0,0,0,0,0]];
+    let testArr2 = [[0,0,0,0,0],[1,1,1,1,1]];
+
+    //get length of main array, len of room array (inner & outer)
+    //pick location in main array to start placing room array
+    //
+
+
+    //end test area
+
     //clears old map, if it exists
     while(mapTable.firstChild) {
         mapTable.removeChild(mapTable.firstChild);
@@ -109,4 +153,3 @@ function MapDisplay() {
         }
     }
 }
-
