@@ -17,6 +17,10 @@ and yes, it's fully possible i'll need to make each display-tile multiple smalle
 in theory that shouldn't be too hard
 */
 
+//list of room array references, to more easily access & modify them
+//yes it's a global. yes i'm a fraud for this all not being a class.
+let roomList = [];
+
 //basic randomizer
 function RollDice(max, min) {
     return Math.floor(Math.random() * (max - min + 1)) + min; 
@@ -42,9 +46,6 @@ function RoomGenerator(height = 5, width = 10){
 
 function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
     //2d array to hold map information
-    //0 = mapCellSpace, ie walkable tile
-    //1 = mapCellWall, ie impassable tile
-    //will add further values for other options later
     let mapArray = [];
     var row = [];
     
@@ -55,7 +56,7 @@ function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
                     cellValue: 1,
                 });
             }
-            else if (max == 0 && min == 0) { 
+            else if (max == 0 && min == 0) { //replace with .fill()
                 row.push({
                     cellValue: 0,
                 });
@@ -76,36 +77,79 @@ function FullMap(height = 5, width = 10) {
     let min = 1;
     let max = 1;
     let fullMap = GenerateSquareArray(height, width, max, min);
+    let roomMaxHeight = 10;
+    let roomMaxWidth = 10;
+    let roomCount = Math.floor((height*width)/((roomMaxHeight*roomMaxWidth)*2)); //this will probably need to be modified in the future
+
+    //clear out roomList before generating a new map. will need to handle this differently later.
+    roomList = [];
+    //builds the roomList global array with random sized rooms
+    for (let i = 0; i < roomCount; i++){
+        let roomHeight = RollDice(roomMaxHeight, 3);
+        let roomWidth = RollDice(roomMaxWidth, 3)
+        roomList.push(GenerateSquareArray(roomHeight, roomWidth, 0, 0));
+    }
+
+    //two ways to approach this.
+    //iterate over fullMap, and depending on randomizer values plop a room
+    //room dims will be random. place it down, then go back to iterating the array
+    //after the first room, check ahead in the array to see if it will overlap an
+    //existing room. if so, either change dims, move the room, or cancel placement
+    //when it's placed, save a reference into roomList
+    //alternative:
+    //generate a set of rooms initially, put them in roomList, possibly with
+    //some metadata. number of rooms determined by map dimensions.
+    //once a list is generated, THEN iterate fullMap placing the rooms
+    //with this approach it would be technically possible to plan placement ahead
+    //so that there isn't a risk of overlap.
     
-    /*
-    iterate over fullMap
-    temporarily: create a set number of rooms of set sizes
-    let's say, 3 rooms, 2x2, 3x4, 5x5
-    pick a location for those rooms to exist (can be predetermined atm)
-    get that index. use that index as the start for the iteration.
-    overwrite the fullMap array with the room array based on that index.
-    */
-    var room = GenerateSquareArray(2, 2, 0, 0);
 
-    for (let i = 5; i < 7 ; i++) {
-        for (let j = 5; j < 7; j++) {
-            fullMap[i][j] = room[i-5][j-5];
-            console.log("i " + i + " j " + j);
-            console.log(fullMap[i][j]);
-            console.log(room[i-5][j-5]);
+    //not sure how to do this so that it goes over the whole map while spitting out new rooms...
+    //room-wise with a random starting i&j value on each pass?
+    var x = 0;
+    var room = roomList[0];
+    console.log("new run");
+
+    //okay i'm done focusing atm. need to rest on this. it's broken. sometimes it gives garbage data
+    //or goes out of bounds despite the while() protections. it also is drawing the same room each time,
+    //and is drawing them all in a line. some broken logic here.
+    for (let x = 0; x < roomList.length; x++) {
+        var startCoord = height + width;
+        while (startCoord + roomList[x].length > height || startCoord + roomList[x][0].length > width) {
+            startCoord = RollDice(height, 1);
         }
+        var i = startCoord;
+        var j = startCoord;
+        var roomI = 0;
+        var roomJ = 0;
+        console.log(startCoord);
+
+        while(roomI < room.length) {
+            //console.log("roomI " + roomI);
+            //console.log("i " + i);
+            while(roomJ < room.length) {
+                //console.log("roomJ " + roomJ);
+                //console.log("j " + j);
+                fullMap[i][j] = room[roomI][roomJ];
+                roomJ++;
+                j++;
+            }
+            roomJ = 0;
+            j = startCoord;
+            roomI++;
+            i++;
+        }
+        /*
+        for (let i = startCoord; i < room.length; i++) {
+            if (i > room.length) {
+                
+            }
+            for (let j = startCoord; j < room[0].length; j++) {
+                fullMap[i][j] = room[i][j];
+            }
+        }*/
     }
 
-    room = GenerateSquareArray(3, 4, 0, 0);
-
-    for (let i = 10; i < 13 ; i++) {
-        for (let j = 10; j < 14; j++) {
-            fullMap[i][j] = room[i-10][j-10];
-            console.log("i " + i + " j " + j);
-            console.log(fullMap[i][j]);
-            console.log(room[i-10][j-10]);
-        }
-    }
 
     return fullMap;
 }
@@ -115,23 +159,10 @@ function MapDisplay() {
     //setup map dims from html form
     let mapHeight = document.getElementById('height').value;
     let mapWidth = document.getElementById('width').value;
-
-    
     var mapArray = FullMap(mapHeight, mapWidth); //GenerateSquareArray(mapHeight, mapWidth, max, min);
     const currentElem = document.getElementById("mapDiv");
     const mapTable = document.getElementById("mapTable");
     
-    //random array merging test area
-    let testArr1 = [[1,1,1,1,1],[0,0,0,0,0]];
-    let testArr2 = [[0,0,0,0,0],[1,1,1,1,1]];
-
-    //get length of main array, len of room array (inner & outer)
-    //pick location in main array to start placing room array
-    //
-
-
-    //end test area
-
     //clears old map, if it exists
     while(mapTable.firstChild) {
         mapTable.removeChild(mapTable.firstChild);
