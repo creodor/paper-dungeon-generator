@@ -69,6 +69,7 @@ function FullMap(height = 5, width = 10) {
     //clear out roomList before generating a new map. will need to handle this differently later.
     roomList = [];
     //builds the roomList global array with random sized rooms
+    //roomList contains objects with various useful data now
     for (let i = 0; i < roomCount; i++){
         let roomHeight = RollDice(roomMaxHeight, 3);
         let roomWidth = RollDice(roomMaxWidth, 3)
@@ -85,7 +86,6 @@ function FullMap(height = 5, width = 10) {
     for (let x = 0; x < roomList.length; x++) {
         var startCoordX = RollDice(width - roomList[x].room[0].length - 1, 1);
         var startCoordY = RollDice(height - roomList[x].room.length - 1, 1);
-        console.log(startCoordX + ", " + startCoordY);
         roomList[x].coordX = startCoordX;
         roomList[x].coordY = startCoordY;
 
@@ -111,8 +111,9 @@ function MapDisplay() {
     //setup map dims from html form
     let mapHeight = document.getElementById('height').value;
     let mapWidth = document.getElementById('width').value;
-    var mapArray = FullMap(mapHeight, mapWidth); //GenerateSquareArray(mapHeight, mapWidth, max, min);
-    const currentElem = document.getElementById("mapDiv");
+
+    var mapArray = FullMap(mapHeight, mapWidth);
+
     const mapTable = document.getElementById("mapTable");
     
     //clears old map, if it exists
