@@ -1,22 +1,3 @@
-/*
-iterate through the desired size grid to assign values to the whole array. then, operate the logic of the procgen against an already existent array,
-modifying values in given locations as indicated until you have a map
-that way instead of trying to generate it in array-order it can be generated in logic-order
-
-may have to call each item in your array a "room", with a value indicating what kind of room it is. basically generate the overall layout first
-will have to do some fancy record-keeping to keep track of where all of the exits of the rooms are
-possibly with a queue
-that could also lead to the grid size being less of a direct tile count limit and more of a complexity limit
-which might be better, also
-*/
-
-/*
-probably need to treat a 3x3 area of tiles as one room
-or draw one tile as 3x3 visual tiles
-and yes, it's fully possible i'll need to make each display-tile multiple smaller tiles to contain symbols and visual data
-in theory that shouldn't be too hard
-*/
-
 //list of room array references, to more easily access & modify them
 //yes it's a global. yes i'm a fraud for this all not being a class.
 let roomList = [];
@@ -53,12 +34,12 @@ function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
     
     for (let i = 0; i < height; i++) { //rows
         for (let j = 0; j < width; j++) { //cols
-            if (max == 1 && min == 1) { //replace with .fill()
+            if (max == 1 && min == 1) {
                 row.push({
                     cellValue: 1,
                 });
             }
-            else if (max == 0 && min == 0) { //replace with .fill()
+            else if (max == 0 && min == 0) {
                 row.push({
                     cellValue: 0,
                 });
@@ -81,7 +62,9 @@ function FullMap(height = 5, width = 10) {
     let fullMap = GenerateSquareArray(height, width, max, min);
     let roomMaxHeight = 10;
     let roomMaxWidth = 10;
-    let roomCount = Math.floor((height*width)/((roomMaxHeight*roomMaxWidth)*2)); //this will probably need to be modified in the future
+    //roomCount currently only allows roughly half the tiles of the map to be used for rooms
+    //the algorithm can be adjusted in future
+    let roomCount = Math.floor((height*width)/((roomMaxHeight*roomMaxWidth)*2));
 
     //clear out roomList before generating a new map. will need to handle this differently later.
     roomList = [];
@@ -92,22 +75,6 @@ function FullMap(height = 5, width = 10) {
         roomList.push(GenerateSquareArray(roomHeight, roomWidth, 0, 0));
     }
 
-    //two ways to approach this.
-    //iterate over fullMap, and depending on randomizer values plop a room
-    //room dims will be random. place it down, then go back to iterating the array
-    //after the first room, check ahead in the array to see if it will overlap an
-    //existing room. if so, either change dims, move the room, or cancel placement
-    //when it's placed, save a reference into roomList
-    //alternative:
-    //generate a set of rooms initially, put them in roomList, possibly with
-    //some metadata. number of rooms determined by map dimensions.
-    //once a list is generated, THEN iterate fullMap placing the rooms
-    //with this approach it would be technically possible to plan placement ahead
-    //so that there isn't a risk of overlap.
-    
-
-//not sure how to do this so that it goes over the whole map while spitting out new rooms...
-    //room-wise with a random starting i&j value on each pass?
     console.log("new run");
 
     for (let x = 0; x < roomList.length; x++) {
@@ -117,11 +84,7 @@ function FullMap(height = 5, width = 10) {
         console.log(startCoordY);
 
         for(let roomY = 0; roomY < roomList[x].length; roomY++) {
-            //console.log("roomI " + roomI);
-            //console.log("i " + i);
             for(let roomX = 0; roomX < roomList[x][roomY].length; roomX++) {
-                //console.log("roomJ " + roomJ);
-                //console.log("j " + j);
                 fullMap[startCoordY + roomY][startCoordX + roomX] = roomList[x][roomY][roomX];
             }
         }
@@ -129,6 +92,13 @@ function FullMap(height = 5, width = 10) {
 
     return fullMap;
 }
+
+/*
+detectOverlap(mainMap, room, mapX, mapY)
+mapX and mapY is the coordinate where the top-left corner of the room should go
+it checks whether the map and the room would have open spaces in the same spots, and rejects the room if they do
+that kind of thing would work for non-rectangular rooms
+*/
 
 //converts the map array into a table to display
 function MapDisplay() {
