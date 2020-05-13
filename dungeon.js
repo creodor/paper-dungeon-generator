@@ -26,6 +26,7 @@ function RollDice(max, min) {
     return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
 
+/* unused for now
 function RoomGenerator(height = 5, width = 10){
     let innerRoom = GenerateSquareArray(height, width, 0, 0);
     let roomWrapTopBottom = GenerateSquareArray(1, width, 1, 1);
@@ -43,6 +44,7 @@ function RoomGenerator(height = 5, width = 10){
     }
     return innerRoom;
 }
+*/
 
 function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
     //2d array to hold map information
@@ -104,52 +106,26 @@ function FullMap(height = 5, width = 10) {
     //so that there isn't a risk of overlap.
     
 
-    //not sure how to do this so that it goes over the whole map while spitting out new rooms...
+//not sure how to do this so that it goes over the whole map while spitting out new rooms...
     //room-wise with a random starting i&j value on each pass?
-    var x = 0;
-    var room = roomList[0];
     console.log("new run");
 
-    //okay i'm done focusing atm. need to rest on this. it's broken. sometimes it gives garbage data
-    //or goes out of bounds despite the while() protections. it also is drawing the same room each time,
-    //and is drawing them all in a line. some broken logic here.
     for (let x = 0; x < roomList.length; x++) {
-        var startCoord = height + width;
-        while (startCoord + roomList[x].length > height || startCoord + roomList[x][0].length > width) {
-            startCoord = RollDice(height, 1);
-        }
-        var i = startCoord;
-        var j = startCoord;
-        var roomI = 0;
-        var roomJ = 0;
-        console.log(startCoord);
+        var startCoordX = RollDice(width - roomList[x][0].length - 1, 1);
+        var startCoordY = RollDice(height - roomList[x].length - 1, 1);
+        console.log(startCoordX);
+        console.log(startCoordY);
 
-        while(roomI < room.length) {
+        for(let roomY = 0; roomY < roomList[x].length; roomY++) {
             //console.log("roomI " + roomI);
             //console.log("i " + i);
-            while(roomJ < room.length) {
+            for(let roomX = 0; roomX < roomList[x][roomY].length; roomX++) {
                 //console.log("roomJ " + roomJ);
                 //console.log("j " + j);
-                fullMap[i][j] = room[roomI][roomJ];
-                roomJ++;
-                j++;
+                fullMap[startCoordY + roomY][startCoordX + roomX] = roomList[x][roomY][roomX];
             }
-            roomJ = 0;
-            j = startCoord;
-            roomI++;
-            i++;
         }
-        /*
-        for (let i = startCoord; i < room.length; i++) {
-            if (i > room.length) {
-                
-            }
-            for (let j = startCoord; j < room[0].length; j++) {
-                fullMap[i][j] = room[i][j];
-            }
-        }*/
     }
-
 
     return fullMap;
 }
