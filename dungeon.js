@@ -72,20 +72,26 @@ function FullMap(height = 5, width = 10) {
     for (let i = 0; i < roomCount; i++){
         let roomHeight = RollDice(roomMaxHeight, 3);
         let roomWidth = RollDice(roomMaxWidth, 3)
-        roomList.push(GenerateSquareArray(roomHeight, roomWidth, 0, 0));
+        roomList.push({
+            room: GenerateSquareArray(roomHeight, roomWidth, 0, 0),
+            height: roomHeight,
+            width: roomWidth,
+        });
     }
 
     console.log("new run");
+    console.log(roomList);
 
     for (let x = 0; x < roomList.length; x++) {
-        var startCoordX = RollDice(width - roomList[x][0].length - 1, 1);
-        var startCoordY = RollDice(height - roomList[x].length - 1, 1);
-        console.log(startCoordX);
-        console.log(startCoordY);
+        var startCoordX = RollDice(width - roomList[x].room[0].length - 1, 1);
+        var startCoordY = RollDice(height - roomList[x].room.length - 1, 1);
+        console.log(startCoordX + ", " + startCoordY);
+        roomList[x].coordX = startCoordX;
+        roomList[x].coordY = startCoordY;
 
-        for(let roomY = 0; roomY < roomList[x].length; roomY++) {
-            for(let roomX = 0; roomX < roomList[x][roomY].length; roomX++) {
-                fullMap[startCoordY + roomY][startCoordX + roomX] = roomList[x][roomY][roomX];
+        for(let roomY = 0; roomY < roomList[x].room.length; roomY++) {
+            for(let roomX = 0; roomX < roomList[x].room[roomY].length; roomX++) {
+                fullMap[startCoordY + roomY][startCoordX + roomX] = roomList[x].room[roomY][roomX];
             }
         }
     }
