@@ -51,16 +51,7 @@ function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
     return mapArray;
 }
 
-function FullMap(height = 5, width = 10) {
-    let min = 1;
-    let max = 1;
-    let fullMap = GenerateSquareArray(height, width, max, min);
-    let roomMaxHeight = 10;
-    let roomMaxWidth = 10;
-    //roomCount currently only allows roughly half the tiles of the map to be used for rooms
-    //the algorithm can be adjusted in future
-    let roomCount = Math.floor((height*width)/((roomMaxHeight*roomMaxWidth)*2));
-
+function buildRoomList(roomCount, roomMaxHeight, roomMaxWidth) {
     //clear out roomList before generating a new map. will need to handle this differently later.
     roomList = [];
     //builds the roomList global array with random sized rooms
@@ -74,9 +65,21 @@ function FullMap(height = 5, width = 10) {
             width: roomWidth,
         });
     }
+}
+
+function FullMap(height = 5, width = 10) {
+    let min = 1;
+    let max = 1;
+    let fullMap = GenerateSquareArray(height, width, max, min);
+    let roomMaxHeight = 10;
+    let roomMaxWidth = 10;
+    //roomCount currently only allows roughly half the tiles of the map to be used for rooms
+    //the algorithm can be adjusted in future
+    let roomCount = Math.floor((height*width)/((roomMaxHeight*roomMaxWidth)*2));
+
+    buildRoomList(roomCount, roomMaxHeight, roomMaxWidth);
 
     console.log("new run");
-    //console.log(roomList);
 
     for (let x = 0; x < roomList.length; x++) {
         var startCoordX = RollDice(width - roomList[x].room[0].length - 1, 1);
@@ -85,7 +88,6 @@ function FullMap(height = 5, width = 10) {
         roomList[x].coordY = startCoordY;
 
         //each pass of adding a room, check if an overlap is detected where it will be placed.
-        
         if (detectOverlap(fullMap, roomList[x])) {
             console.log("overlap");
         }
