@@ -116,8 +116,7 @@ that kind of thing would work for non-rectangular rooms
 */
     for(let roomY = 0; roomY < roomMap.room.length; roomY++) {
         for(let roomX = 0; roomX < roomMap.room[roomY].length; roomX++) {
-            //console.log(map[roomMap.coordY+roomY][roomMap.coordX+roomX]);
-            if (map[roomMap.coordY + roomY][roomMap.coordX + roomX].cellValue == 0) {
+            if (map[roomMap.coordY + roomY][roomMap.coordX + roomX].cellValue == 0 && roomMap.room[roomY][roomX].cellValue == 0) {
                 return true;
             }
         }
