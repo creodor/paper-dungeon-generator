@@ -81,7 +81,7 @@ function FullMap(height = 5, width = 10) {
     }
 
     console.log("new run");
-    console.log(roomList);
+    //console.log(roomList);
 
     for (let x = 0; x < roomList.length; x++) {
         var startCoordX = RollDice(width - roomList[x].room[0].length - 1, 1);
@@ -89,22 +89,41 @@ function FullMap(height = 5, width = 10) {
         roomList[x].coordX = startCoordX;
         roomList[x].coordY = startCoordY;
 
+        //each pass of adding a room, check if an overlap is detected where it will be placed.
+        
+        if (detectOverlap(fullMap, roomList[x])) {
+            console.log("overlap");
+        }
+        else {
+            console.log("no overlap");
+        }        
+
         for(let roomY = 0; roomY < roomList[x].room.length; roomY++) {
             for(let roomX = 0; roomX < roomList[x].room[roomY].length; roomX++) {
                 fullMap[startCoordY + roomY][startCoordX + roomX] = roomList[x].room[roomY][roomX];
             }
         }
     }
-
     return fullMap;
 }
 
+
+function detectOverlap(map, roomMap) {
 /*
-detectOverlap(mainMap, room, mapX, mapY)
 mapX and mapY is the coordinate where the top-left corner of the room should go
 it checks whether the map and the room would have open spaces in the same spots, and rejects the room if they do
 that kind of thing would work for non-rectangular rooms
 */
+    for(let roomY = 0; roomY < roomMap.room.length; roomY++) {
+        for(let roomX = 0; roomX < roomMap.room[roomY].length; roomX++) {
+            //console.log(map[roomMap.coordY+roomY][roomMap.coordX+roomX]);
+            if (map[roomMap.coordY + roomY][roomMap.coordX + roomX].cellValue == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 //converts the map array into a table to display
 function MapDisplay() {
