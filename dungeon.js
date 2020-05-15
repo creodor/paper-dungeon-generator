@@ -107,16 +107,11 @@ function FullMap(height = 5, width = 10) {
     return fullMap;
 }
 
-
-function detectOverlap(map, roomMap) {
-/*
-mapX and mapY is the coordinate where the top-left corner of the room should go
-it checks whether the map and the room would have open spaces in the same spots, and rejects the room if they do
-that kind of thing would work for non-rectangular rooms
-*/
+//detects value overlaps between maps
+function detectOverlap(map, roomMap, value = 0) {
     for(let roomY = 0; roomY < roomMap.room.length; roomY++) {
         for(let roomX = 0; roomX < roomMap.room[roomY].length; roomX++) {
-            if (map[roomMap.coordY + roomY][roomMap.coordX + roomX].cellValue == 0 && roomMap.room[roomY][roomX].cellValue == 0) {
+            if (map[roomMap.coordY + roomY][roomMap.coordX + roomX].cellValue == value && roomMap.room[roomY][roomX].cellValue == value) {
                 return true;
             }
         }
