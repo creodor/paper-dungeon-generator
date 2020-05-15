@@ -1,3 +1,18 @@
+/*
+general ideas/suggestions:
+make tile lines a toggle (in the html/css, probably)
+create two maps, one for GM and one for players with different data revealed 
+- create the player map before the pass that adds hidden features
+OR
+- create whole map, mark hidden features, then remove those on the player map
+OR
+- a toggle to show/hide hidden features on the same map
+label rooms/doors with numbers/letters
+generation requirements, ie minimum and maximum values for things like rooms, treasure, encounters, etc.
+possibly a 'try to' that the map will treat as a soft minimum?
+more organic/rounded rooms? probably would require a total rework of the core generation function.
+*/
+
 //list of room array references, to more easily access & modify them
 //yes it's a global. yes i'm a fraud for this all not being a class.
 let roomList = [];
@@ -6,26 +21,6 @@ let roomList = [];
 function RollDice(max, min) {
     return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
-
-/* unused for now
-function RoomGenerator(height = 5, width = 10){
-    let innerRoom = GenerateSquareArray(height, width, 0, 0);
-    let roomWrapTopBottom = GenerateSquareArray(1, width, 1, 1);
-    //adds the top/bottom walls
-    innerRoom.unshift(roomWrapTopBottom[0]);
-    innerRoom.push(roomWrapTopBottom[0]);
-    
-    for (let i = 1; i < innerRoom.length; i++) {
-        innerRoom[i].unshift({
-            cellValue: 1,
-        });
-        innerRoom[i].push({
-            cellValue: 1,
-        });
-    }
-    return innerRoom;
-}
-*/
 
 function GenerateSquareArray(height = 5, width = 10, max = 1, min = 1) {
     //2d array to hold map information
