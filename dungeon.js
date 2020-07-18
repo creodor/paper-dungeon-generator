@@ -13,6 +13,33 @@ possibly a 'try to' that the map will treat as a soft minimum?
 more organic/rounded rooms? probably would require a total rework of the core generation function.
 */
 
+/*
+just sitting here thinking on it, probably determine the outer edge of two rooms, then try to draw a line between them based on coords. as necessary, include 90 degree turns. that seems the most direct/simplest way.
+it's also the least interesting
+HessuuToday at 2:41 PM
+I think the higher level logic is to first pick a random room and move it to a list of "connected" rooms. then search for a path to "disconnected" room and connect it with a corridor, moving the room to the list of connected rooms afterwards.
+CreodorToday at 2:41 PM
+yes that does handle many more of the potential issues
+HessuuToday at 2:41 PM
+then just repeat until all rooms are connected
+CreodorToday at 2:42 PM
+that approach initially would likely create bizarre paths, if it just grabs rooms one at a time and connects to a new one
+but
+it'd create connections
+HessuuToday at 2:42 PM
+hmm, true
+CreodorToday at 2:43 PM
+it probably would need to be adjusted to be aware of relative locations
+so that it tries to connect nearby rooms with priority
+HessuuToday at 2:44 PM
+if you do a breadth-first pathfind, you should find closest rooms first
+you should look into making a pathfinding function that has path weight
+could try making it so that going straight is always "cheaper" than turning
+I'm not 100% sure about this, but I think it might result in more corridor-like paths
+CreodorToday at 2:47 PM
+that makes sense
+*/
+
 //list of room array references, to more easily access & modify them
 //yes it's a global. yes i'm a fraud for this all not being a class.
 let roomList = [];
